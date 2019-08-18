@@ -58,9 +58,16 @@ def login(request):
 def login_handle(request):
     # 获取登录信息
     post = request.POST
-    username = post.get('username')
+    user_name = post.get('user_name')
     pwd = post.get('pwd')
+    print(user_name, pwd)
+    # 判断用户名是否正确
+    uname = UserInfo.objects.filter(uname=user_name)
     # 加密密码
     sha1 = hashlib.sha1()
     sha1.update(pwd.encode('utf-8'))
     encrypted_pwd = sha1.hexdigest()
+    context = {
+        'title':'用户登录',
+    }
+    return render(request, 'df_user/login.html', context=context)
