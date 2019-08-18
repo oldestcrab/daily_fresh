@@ -22,7 +22,7 @@
 			<a href="{% url 'df_user:login' %}">登录</a>
 		</div>
 		<div class="reg_form clearfix">
-			<form action="{% url 'df_user:register_handle' %}" method="POST">
+			<form id="reg_from" action="{% url 'df_user:register_handle' %}" method="POST">
 				{% csrf_token %}
 				<ul>
 					<li>

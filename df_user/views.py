@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, HttpResponse
+from django.http import JsonResponse
 from django.urls import reverse
 from .models import UserInfo
 
@@ -41,6 +42,12 @@ def register_handle(request):
     }
     # 转到登录页面
     return render(request, 'df_user/login.html', context=context)
+
+def register_exist(request):
+    # 判断数据库中是否已存在该用户名
+    user_name = request.GET.get('user_name')
+    count = UserInfo.objects.filter(uname=user_name).count()
+    return JsonResponse({'count':count})
 
 def login(request):
     context = {
