@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect, HttpResponse
+from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
 from .models import UserInfo
@@ -39,6 +39,7 @@ def register_handle(request):
 
     context = {
         'title':'用户登录',
+        'user_name':user_name,
     }
     # 转到登录页面
     return render(request, 'df_user/login.html', context=context)
@@ -50,24 +51,62 @@ def register_exist(request):
     return JsonResponse({'count':count})
 
 def login(request):
+    user_name = request.COOKIES.get('user_name', '')
     context = {
         'title':'用户登录',
+        'user_name': user_name,
+        'error_name': 0,
+        'error_pwd':0,
     }
     return render(request, 'df_user/login.html', context=context)
 
 def login_handle(request):
     # 获取登录信息
     post = request.POST
-    user_name = post.get('user_name')
+    user_name = post.get('user_name','')
     pwd = post.get('pwd')
-    print(user_name, pwd)
+    jizhu = post.get('jizhu', 0)
+    # print(user_name, pwd, jizhu)
+    # 从数据库获取用户信息
+    users = UserInfo.objects.filter(uname=user_name)
     # 判断用户名是否正确
-    uname = UserInfo.objects.filter(uname=user_name)
-    # 加密密码
-    sha1 = hashlib.sha1()
-    sha1.update(pwd.encode('utf-8'))
-    encrypted_pwd = sha1.hexdigest()
-    context = {
+    if len(users) == 1:
+        # 加密密码
+        sha1 = hashlib.sha1()
+        sha1.update(pwd.encode('utf-8'))
+        encrypted_pwd = sha1.hexdigest()
+        # 判断密码是否相同
+        if encrypted_pwd == users[0].upwd:
+            url = request.COOKIES.get('url', '/')
+            # 跳转到登录之前的链接或者首页
+            red = HttpResponseRedirect(url)
+            # 判断是否要记住用户名
+            if jizhu:
+                red.set_cookie('user_name', user_name)
+            else:
+                red.set_cookie('user_name', '', max_age=-1)
+            request.session['user_id'] = users[0].id
+            request.session['user_name'] = user_name
+            return red
+
+        # 密码错误
+        else:
+            context = {
+            'title':'用户登录',
+            'user_name':user_name,
+            'pwd':pwd,
+            'error_name':0,
+            'error_pwd':1,
+            }
+            return render(request, 'df_user/login.html', context=context)
+
+    # 用户名错误
+    else:
+        context = {
         'title':'用户登录',
-    }
-    return render(request, 'df_user/login.html', context=context)
+        'user_name':user_name,
+        'pwd':pwd,
+        'error_name':1,
+        'error_pwd':0,
+        }
+        return render(request, 'df_user/login.html', context=context)
