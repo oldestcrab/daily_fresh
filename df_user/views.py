@@ -110,3 +110,11 @@ def login_handle(request):
         'error_pwd':0,
         }
         return render(request, 'df_user/login.html', context=context)
+
+def logout(request):
+    request.session.flush()
+    return redirect('df_user:login')
+
+def info(request):
+
+    return render(request, 'df_user/user_center_info.html')
