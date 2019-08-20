@@ -5,6 +5,8 @@ from .models import UserInfo
 
 import hashlib
 
+from . import user_decorator
+
 # Create your views here.
 def register(request):
     # 注册视图
@@ -115,6 +117,48 @@ def logout(request):
     request.session.flush()
     return redirect('df_user:login')
 
+@user_decorator.login
 def info(request):
+    # 获取对象
+    user_id = request.session.get('user_id')
+    user = UserInfo.objects.filter(id=user_id).first()
+    # print(user.uname)
+    goods_list = []
+    explain = '无最近浏览'
+    context = {
+        'title':'用户中心',
+        'page_name':1,
+        'user_name': user.uname,
+        'user_address': user.uaddress,
+        'user_phone': user.uphone,
+        'goods_list': goods_list,
+        'explain': explain,
+    }
+    return render(request, 'df_user/user_center_info.html', context=context)
 
-    return render(request, 'df_user/user_center_info.html')
+@user_decorator.login
+def order(request, order_page):
+
+    context = {
+
+    }
+    return render(request, 'df_user/user_center_order.html', context=context)
+
+@user_decorator.login
+def site(request):
+    user_id = request.session.get('user_id')
+    user = UserInfo.objects.filter(id=user_id).first()
+    if request.method == 'POST':
+        post = request.POST
+        user.ushou = post.get('ushou')
+        user.uaddress = post.get('user_address')
+        user.uyoubian = post.get('user_youbian')
+        user.uphone = post.get('user_phone')
+        user.save()
+
+    context = {
+        'title':'用户中心',
+        'page_name':1,
+        'user': user,
+    }
+    return render(request, 'df_user/user_center_site.html', context=context)

@@ -9,4 +9,6 @@ urlpatterns = [
     url(r'^login_handle/', views.login_handle, name='login_handle'),
     url(r'^logout/', views.logout, name='logout'),
     url(r'^info/', views.info, name='info'),
+    url(r'^order/(?P<order_page>\d+)/', views.order, name='order'),
+    url(r'^site/', views.site, name='site'),
 ]
