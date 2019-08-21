@@ -19,4 +19,5 @@ from django.contrib import admin
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^user/', include(('df_user.urls', 'df_user'), namespace='df_user')),
+    url(r'^tinymce/', include('tinymce.urls')),
 ]

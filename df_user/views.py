@@ -151,9 +151,9 @@ def site(request):
     if request.method == 'POST':
         post = request.POST
         user.ushou = post.get('ushou')
-        user.uaddress = post.get('user_address')
-        user.uyoubian = post.get('user_youbian')
-        user.uphone = post.get('user_phone')
+        user.uaddress = post.get('uaddress')
+        user.uyoubian = post.get('uyoubian')
+        user.uphone = post.get('uphone')
         user.save()
 
     context = {

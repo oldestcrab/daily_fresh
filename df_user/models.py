@@ -12,4 +12,5 @@ class UserInfo(models.Model):
 
     def _str__(self):
         return self.uname
+        
 
