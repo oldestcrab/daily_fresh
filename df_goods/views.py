@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, HttpResponse
 from .models import TypeInfo, GoodsInfo
 
 # Create your views here.
@@ -18,6 +18,7 @@ def index(request):
     type41 = typelist[4].goodsinfo_set.order_by('-gclick')[0:4]
     type5 = typelist[5].goodsinfo_set.order_by('-id')[0:4]
     type51 = typelist[5].goodsinfo_set.order_by('-gclick')[0:4]
+
     cart_num = 0
     if 'user_id' in request.session:
         pass
@@ -35,3 +36,23 @@ def index(request):
         'type5': type5, 'type51': type51,
     }
     return render(request, 'df_goods/index.html', context=context)
+
+def detail(request, goods_id):
+    cart_num = 0
+    goods = GoodsInfo.objects.filter(id=int(goods_id)).first()
+    # 点击量+1
+    goods.gclick = goods.gclick + 1
+    goods.save()
+
+    # 上新
+    news = goods.gtype.goodsinfo_set.order_by('-id')[0:2]
+    context = {
+        'title': '商品详情',
+        'guest_cart': 1,
+        'cart_num': cart_num,
+        'goods': goods,
+        'id': goods_id,
+        'news': news,
+    }
+    resposne = render(request, 'df_goods/detail.html', context=context)
+    return resposne
