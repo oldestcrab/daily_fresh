@@ -1,4 +1,6 @@
 from django.shortcuts import render, HttpResponse
+from django.core.paginator import Paginator
+
 from .models import TypeInfo, GoodsInfo
 
 # Create your views here.
@@ -56,3 +58,40 @@ def detail(request, goods_id):
     }
     resposne = render(request, 'df_goods/detail.html', context=context)
     return resposne
+
+def goods_list(request, type_id, page_id, sort_id):
+    typeinfo = TypeInfo.objects.get(id=int(type_id))
+    # 上新
+    news = typeinfo.goodsinfo_set.order_by('-id')[0:2]
+    cart_num, guest_cart = 0, 0
+    goods_list =[]
+
+    user_id = request.session.get('user_id')
+    if user_id:
+        guest_cart = 1
+
+    # 默认最新
+    if sort_id == '1':
+        goods_list = typeinfo.goodsinfo_set.order_by('-id')
+    # 按照价格
+    if sort_id == '2':
+        goods_list = typeinfo.goodsinfo_set.order_by('-gprice')
+    # 按照人气
+    if sort_id == '2':
+        goods_list = typeinfo.goodsinfo_set.order_by('-gprice')
+
+    # 分页
+    paginator = Paginator(goods_list, 4)
+    # 返回page对象，包含商品信息
+    page = paginator.page(int(page_id))
+    context = {
+        'title': '商品列表',
+        'cart_num': cart_num,
+        'guest_cart': guest_cart,
+        'news': news,
+        'sort': sort_id,
+        'typeinfo': typeinfo,
+        'page': page,
+        'paginator': paginator,
+    }
+    return render(request, 'df_goods/list.html', context=context)
