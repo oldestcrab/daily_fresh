@@ -1,4 +1,4 @@
-{% extends "df_goods/bast.html" %}
+{% extends "df_goods/base.html" %}
 {% block center_content %}
 
 <div class="main_wrap clearfix">
@@ -25,22 +25,13 @@
 		</div>
 
 		<ul class="goods_type_list clearfix">
-			<li>
-				<a href="detail.html"><img src="{{ MEDIA_URL }} {{ g.gpic }}"></a>
-				<h4><a href="detail.html">大兴大棚草莓</a></h4>
-				<div class="operate">
-					<span class="prize">￥16.80</span>
-					<span class="unit">16.80/500g</span>
-					<a href="#" class="add_goods" title="加入购物车"></a>
-				</div>
-			</li>
 
 			{% for g in page %}
 			<li>
 				<a href="/{{ g.id }}/"><img src="{{ MEDIA_URL }} {{ g.gpic }}"></a>
 				<h4><a href="/{{ g.id }}/">{{ g.gtitle }}</a></h4>
 				<div class="operate">
-					<span class="prize">￥{{ g.gpric }}</span>
+					<span class="prize">￥{{ g.gprice }}</span>
 					<span class="unit">{{ g.gunit }}</span>
 					<a href="#" class="add_goods" title="加入购物车"></a>
 				</div>
@@ -52,14 +43,14 @@
 			{% if page.hsa_previous %}
 			<a href="/list{{ typeinfo.id }}_{{ page.previous_page_number }}_{{ sort_id }}">
 				<上一页</a> {% endif %} {% for pindex in paginator.page_range %} {% if pindex == page.number %} <a
-					href="/list{{ typeinfo.id }}_{{ pindex }}_{{ sort_id }}" class="active">{{ pindex }}>
+					href="/list{{ typeinfo.id }}_{{ pindex }}_{{ sort_id }}" class="active">{{ pindex }}
 			</a>
 			{% else %}
-			<a href="/list{{ typeinfo.id }}_{{ pindex }}_{{ sort_id }}">{{ pindex }}></a>
+			<a href="/list{{ typeinfo.id }}_{{ pindex }}_{{ sort_id }}">{{ pindex }}</a>
 			{% endif %}
 			{% endfor %}
 			{% if page.has_next %}
-			<a href="/list{{ typeinfo.id }}_{{ page_next_page_number }}_{{ sort_id }}">下一页></a>
+			<a href="/list{{ typeinfo.id }}_{{ page.next_page_number }}_{{ sort_id }}">下一页</a>
 			{% endif %}
 		</div>
 	</div>

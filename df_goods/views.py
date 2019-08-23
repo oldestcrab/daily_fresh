@@ -77,7 +77,7 @@ def goods_list(request, type_id, page_id, sort_id):
     if sort_id == '2':
         goods_list = typeinfo.goodsinfo_set.order_by('-gprice')
     # 按照人气
-    if sort_id == '2':
+    if sort_id == '3':
         goods_list = typeinfo.goodsinfo_set.order_by('-gprice')
 
     # 分页
@@ -89,7 +89,7 @@ def goods_list(request, type_id, page_id, sort_id):
         'cart_num': cart_num,
         'guest_cart': guest_cart,
         'news': news,
-        'sort': sort_id,
+        'sort_id': sort_id,
         'typeinfo': typeinfo,
         'page': page,
         'paginator': paginator,

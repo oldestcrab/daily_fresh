@@ -23,17 +23,17 @@
 		</div>
 		<div class="total">总价：<em>{{ goods.gprice }}元</em></div>
 		<div class="operate_btn">
-			{% if request.session.user_id|default:' ' != ' ' %}
+			{% if request.session.user_id|default:'' != '' %}
 			<a href="javascript:;" class="buy_btn">立即购买</a>
 			{% else %}
-			<a href="{{ url 'df_user:login' }}" class="buy_btn" id="buy_now">立即购买</a>
+			<a href="{% url 'df_user:login' %}" class="buy_btn" id="buy_now">立即购买</a>
 
 			{% endif %}
-			{% if request.session.user_id|default:' ' != ' '  %}
+			{% if request.session.user_id|default:'' != ''  %}
 			<a href="javascript:;" class="add_cart" id="add_cart">加入购物车</a>
 			{% else %}
 
-			<a href="{{ url 'df_user:login' }}" class="add_cart" id="add_cart">加入购物车</a>
+			<a href="{% url 'df_user:login' %}" class="add_cart" id="add_cart">加入购物车</a>
 			{% endif %}
 		</div>
 	</div>
@@ -77,7 +77,7 @@
 
 <div class="add_jump"></div>
 
-<script type="text/javascript" src="{% static 'js/jquery-1.12.2.js' %}"></script>
+<script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
 <script type="text/javascript">
 	var $add_x = $('#add_cart').offset().top;
 	var $add_y = $('#add_cart').offset().left;
@@ -93,7 +93,7 @@
 	$('#add_cart').click(function () {
 		if ($('#login_btn').text().indexOf('登录') >= 0){
 			alert('请登录后购买！')
-			location.href("{{ url 'df_user:login'}}");
+			location.href("{% url 'df_user:login' %}");
 			return;
 		}
 		$(".add_jump").stop().animate({

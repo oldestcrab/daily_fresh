@@ -11,11 +11,12 @@ class TypeinfoAdmin(admin.ModelAdmin):
 
 class GoodsInfoAdmin(admin.ModelAdmin):
     list_per_page = 20
-    list_display = ['id', 'gtitle', 'gunit', 'gclick', 'gprice', 'gpic', 'gkucun', 'gjianjie']
+    list_display = ['id', 'gtitle', 'gunit', 'gclick', 'gpic', 'gprice', 'gkucun', 'gjianjie']
+    # list_display = ['id', 'gtitle', 'gunit']
     list_editable = ['gkucun']
     readonly_fields = ['gclick']
     search_fields = ['gtitle', 'gcontent', 'gjianjie']
     list_display_links = ['gtitle']
 
 admin.site.register(TypeInfo, TypeinfoAdmin)
-admin.site.register(GoodsInfo)
+admin.site.register(GoodsInfo, GoodsInfoAdmin)
