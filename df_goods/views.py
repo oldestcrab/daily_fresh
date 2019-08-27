@@ -1,7 +1,9 @@
 from django.shortcuts import render, HttpResponse
 from django.core.paginator import Paginator
+from datetime import datetime
 
 from .models import TypeInfo, GoodsInfo
+from df_user.models import GoodsBrowser
 
 # Create your views here.
 def index(request):
@@ -57,6 +59,25 @@ def detail(request, goods_id):
         'news': news,
     }
     resposne = render(request, 'df_goods/detail.html', context=context)
+
+    # 更新用户浏览记录，保持在5条
+    if 'user_id' in request.session:
+        user_id = request.session.get('user_id')
+        try:
+            browsed_good = GoodsBrowser.objects.get(user_id=int(user_id), good_id=int(goods_id))
+        except:
+            browsed_good = None
+        if browsed_good:
+            browsed_good.browser_time = datetime.now()
+            browsed_good.save()
+        else:
+            GoodsBrowser.objects.create(user_id=int(user_id), good_id=int(goods_id))
+            browsed_goods = GoodsBrowser.objects.filter(user_id=int(user_id))
+            if browsed_goods.count() > 5:
+                ordered_goods = browsed_goods.order_by('-browser_time')
+                for _ in ordered_goods[5:]:
+                    _.delete()
+
     return resposne
 
 def goods_list(request, type_id, page_id, sort_id):

@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
-from .models import UserInfo
+from .models import UserInfo, GoodsBrowser
 
 import hashlib
 
@@ -124,7 +124,12 @@ def info(request):
     user = UserInfo.objects.filter(id=user_id).first()
     # print(user.uname)
     goods_list = []
-    explain = '无最近浏览'
+    browser_goods = GoodsBrowser.objects.filter(user_id=int(user_id)).order_by('-browser_time')
+    if browser_goods:
+        goods_list = [ browser_good.good for browser_good in browser_goods]
+        explain = '最近浏览'
+    else:
+        explain = '无最近浏览'
     context = {
         'title':'用户中心',
         'page_name':1,
