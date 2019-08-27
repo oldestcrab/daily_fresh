@@ -24,4 +24,4 @@ class GoodsBrowser(models.Model):
         verbose_name_plural = verbose_name
 
     def __str__(self):
-        return '{user}浏览记录{title}'.format(user=self.user.name, title=self.good.gtitle)
+        return '{user}浏览记录{title}'.format(user=self.user.uname, title=self.good.gtitle)
