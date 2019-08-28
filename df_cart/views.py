@@ -6,11 +6,19 @@ from .models import CartInfo
 
 @user_decorator.login
 def cart(request):
+    user_id = request.session.get('user_id')
+    carts = CartInfo.objects.filter(user_id=int(user_id))
+    # print(cart)
     context = {
         'title': '购物车',
         'page_name': 1,
+        'carts': carts,
     }
-    return render(request, 'df_cart/cart.html', context=context)
+    if request.is_ajax():
+        count = carts.count()
+        return JsonResponse({'count': count})
+    else:
+        return render(request, 'df_cart/cart.html', context=context)
 
 @user_decorator.login
 def add(request, goods_id, count):
