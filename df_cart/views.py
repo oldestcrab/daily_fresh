@@ -44,3 +44,25 @@ def add(request, goods_id, count):
         return JsonResponse(context)
     else:
         return redirect('df_cart:cart')
+
+@user_decorator.login
+def edit(request, cart_id, count):
+    try:
+        cart = CartInfo.objects.get(id=int(cart_id))
+        cart.count = int(count)
+        cart.save()
+        return JsonResponse({'count':0})
+    except:
+        return JsonResponse({'count':count})
+
+
+@user_decorator.login
+def delete(request, cart_id):
+    data = {}
+    try:
+        cart = CartInfo.objects.get(id=int(cart_id))
+        cart.delete()
+        data['ok'] = 1
+    except:
+        data['ok'] = 0
+    return JsonResponse(data)

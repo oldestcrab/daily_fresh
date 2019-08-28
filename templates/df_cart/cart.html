@@ -2,14 +2,47 @@
 
 {% block head %}
 <script type="text/javascript">
-	$(function () {
+	function cart_del(cart_id) {
+		del = confirm('确定删除');
+		if (del) {
+			$.get('/cart/delete' + cart_id + '/', function (data) {
+				if (data.ok == 1) {
+					$('ul').remove('#' + cart_id);
+					total();
+				}
+			})
+		}
+	}
 
+	function total() {
+		total1 = 0;
+		total_count = 0;
+		$('.col07').each(function () {
+			price = $(this).prev().prev().text();
+			count = $(this).prev().find('input').val();
+			total0 = parseFloat(count) * parseFloat(price)
+			$(this).text(total0.toFixed(2));
+
+			checked = $(this).prev().prev().prev().prev().prev().prev().find('input').is(':checked')
+			if (checked) {
+				total_count++;
+				total1 += total0
+			}
+		})
+
+		$('#total').text(total1);
+		$('#total_count').text(total_count);
+	}
+	$(function () {
+		total();
 		// 全选
 		$('#check_all').click(function () {
 			state = $(this).prop('checked');
 			$(':checkbox:not(#check_all)').prop('checked', state)
 		});
 		$(':checkbox:not(#check_all)').click(function () {
+			total();
+			//alert($(this).is(':checked'))
 			if ($(this).prop('checked')) {
 				if ($(':checked').length + 1 == $(':checkbox').length) {
 					$('#check_all').prop('checked', true)
@@ -18,29 +51,50 @@
 				$('#check_all').prop('checked', false)
 			}
 		});
-		// 总额
-		function total() {
-			total1 = 0;
-			total_count = 0;
-			$('.col07').each(function () {
-				count = $(this).prev().prev().text();
-				price = $(this).prev().find('input').val();
-				total0 = parseFloat(count) * parseFloat(price)
-				$(this).text(total0.toFixed(2));
-				total_count++;
-				total1+=total0
+
+		$('.add').click(function () {
+			txt = $(this).next()
+			txt.val(parseFloat(txt.val()) + 1).blur();
+		})
+		$('.minus').click(function () {
+			txt = $(this).prev()
+			txt.val(parseFloat(txt.val()) - 1).blur();
+		})
+		$('.num_show').blur(function () {
+			count = parseFloat($(this).val())
+			kucun = parseFloat($(this).attr('kucun'))
+			if (count < 1) {
+				alert('商品数量不能小于1')
+				$(this).val(1);
+				count = 1;
+				$(this).focus()
+				return
+			} else if (count > kucun) {
+				alert('商品数量不能超过库存');
+				$(this).val(kucun)
+				count = kucun
+				$(this).focus()
+				return;
+			}
+			cart_id = $(this).parents('.cart_list_td').attr('id');
+			$.get('/cart/edit' + cart_id + '_' + count + '/', function (data) {
+				if (data.count == 0) {
+					total();
+				} else {
+					$(this).val(data.count)
+				}
 			})
-			$('#total').text(total1);
-			$('#total_count').text(total_count);
-		}
-		total();
+		})
+
+		// 总额
+
 
 	});
 </script>
 {% endblock head %}
 
 {% block center_body %}
-<div class="total_count">全部商品<em>{{ carts.count }}</em>件</div>
+<div class="total_count">全部商品<em>{{ carts|length }}</em>件</div>
 <ul class="cart_list_th clearfix">
 	<li class="col01">商品名称</li>
 	<li class="col02">商品单位</li>
@@ -50,8 +104,8 @@
 	<li class="col06">操作</li>
 </ul>
 {% for cart in carts %}
-<ul class="cart_list_td clearfix">
-	<li class="col01"><input type="checkbox" name="" checked></li>
+<ul class="cart_list_td clearfix" id="{{ cart.id }}">
+	<li class="col01"><input type="checkbox" name="" checked="checked"></li>
 	<li class="col02"><img src="{{MEDIA_URL}}{{ cart.goods.gpic }}"></li>
 	<li class="col03">{{ cart.goods.gtitle }}<br><em>{{ cart.goods.gprice }}元/{{ cart.goods.gunit }}</em></li>
 	<li class="col04">{{ cart.goods.gunit }}</li>
@@ -59,17 +113,17 @@
 	<li class="col06">
 		<div class="num_add">
 			<a href="javascript:;" class="add fl">+</a>
-			<input type="text" class="num_show fl" value="1">
+			<input type="text" class="num_show fl" value="{{ cart.count }}" kucun="{{ cart.goods.gkucun }}">
 			<a href="javascript:;" class="minus fl">-</a>
 		</div>
 	</li>
 	<li class="col07">25.80元</li>
-	<li class="col08"><a href="javascript:;">删除</a></li>
+	<li class="col08"><a href="javascript:cart_del({{ cart.id }});">删除</a></li>
 </ul>
 {% endfor %}
 
 <ul class="settlements">
-	<li class="col01"><input type="checkbox" name="" checked="" id="check_all" href="javascript:;"></li>
+	<li class="col01"><input type="checkbox" name="" checked="checked" id="check_all" href="javascript:;"></li>
 	<li class="col02">全选</li>
 	<li class="col03">合计(不含运费)：<span>¥</span><em id='total'>42.60</em><br>共计<b id='total_count'>2</b>件商品</li>
 	<li class="col04"><a href="place_order.html">去结算</a></li>
