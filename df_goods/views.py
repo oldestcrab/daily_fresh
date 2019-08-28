@@ -4,6 +4,7 @@ from datetime import datetime
 
 from .models import TypeInfo, GoodsInfo
 from df_user.models import GoodsBrowser
+from df_cart.models import CartInfo
 
 # Create your views here.
 def index(request):
@@ -23,15 +24,10 @@ def index(request):
     type5 = typelist[5].goodsinfo_set.order_by('-id')[0:4]
     type51 = typelist[5].goodsinfo_set.order_by('-gclick')[0:4]
 
-    cart_num = 0
-    if 'user_id' in request.session:
-        pass
-        # cart_num = request.session.get('user_id')
-
     context = {
         'title': '主页',
         'guest_cart': 1,
-        'cart_num': cart_num,
+        'cart_num': cart_count(request),
         'type0': type0, 'type01': type01,
         'type1': type1, 'type11': type11,
         'type2': type2, 'type21': type21,
@@ -42,7 +38,6 @@ def index(request):
     return render(request, 'df_goods/index.html', context=context)
 
 def detail(request, goods_id):
-    cart_num = 0
     goods = GoodsInfo.objects.filter(id=int(goods_id)).first()
     # 点击量+1
     goods.gclick = goods.gclick + 1
@@ -53,7 +48,7 @@ def detail(request, goods_id):
     context = {
         'title': '商品详情',
         'guest_cart': 1,
-        'cart_num': cart_num,
+        'cart_num': cart_count(request),
         'goods': goods,
         'id': goods_id,
         'news': news,
@@ -107,7 +102,7 @@ def goods_list(request, type_id, page_id, sort_id):
     page = paginator.page(int(page_id))
     context = {
         'title': '商品列表',
-        'cart_num': cart_num,
+        'cart_num': cart_count(request),
         'guest_cart': guest_cart,
         'news': news,
         'sort_id': sort_id,
@@ -116,3 +111,9 @@ def goods_list(request, type_id, page_id, sort_id):
         'paginator': paginator,
     }
     return render(request, 'df_goods/list.html', context=context)
+
+def cart_count(request):
+    if 'user_id' in request.session:
+        user_id = int(request.session.get('user_id'))
+        return CartInfo.objects.filter(user_id=user_id).count()
+    return cart_count

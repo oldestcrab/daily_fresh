@@ -9,27 +9,28 @@
 			$('.num_show').blur();
 		}
 	};
-	function minus(){
+
+	function minus() {
 		num = parseInt($('.num_show').val());
 		if (num > 1) {
 			$('.num_show').val(num - 1);
 			$('.num_show').blur();
 		}
 	}
-	$(function(){
-		$('.num_show').blur(function(){
+	$(function () {
+		$('.num_show').blur(function () {
 			num = parseInt($('.num_show').val());
-			if(num<=1){
-				num=1;
+			if (num <= 1) {
+				num = 1;
 			}
 			kucun = parseInt($('.goods_kucun').html());
-			if(num>=kucun){
-				num=kucun;
+			if (num >= kucun) {
+				num = kucun;
 			}
 			price = parseFloat($('#gprice').html());
-			total = num*price;
+			total = num * price;
 			$('.num_show').val(num);
-			$('#gtotal').html(total.toFixed(2)+'元');
+			$('#gtotal').html(total.toFixed(2) + '元');
 
 		});
 	})
@@ -116,34 +117,60 @@
 
 <script type="text/javascript" src="{% static 'js/jquery-1.12.4.min.js' %}"></script>
 <script type="text/javascript">
-	var $add_x = $('#add_cart').offset().top;
-	var $add_y = $('#add_cart').offset().left;
+	$(document).ready(function () {
 
-	var $to_x = $('#show_count').offset().top;
-	var $to_y = $('#show_count').offset().left;
+		$(".buy_btn").click(function () {
+			if ($('.login_btn').text().indexOf('登录') >= 0) {
+				alert('请登陆后购买');
+				location.href("{% url 'df_user:login' %}");
+				return;
+			}
+			num = parseInt($('.num_show').val());
+			$.get('/cart/add{{ goods.id }}_' + num + '/', function (data) {
+				$('#show_count').text(data.count);
+			});
+			location.href = "{% url 'df_cart:cart' %}";
 
-	$(".add_jump").css({
-		'left': $add_y + 80,
-		'top': $add_x + 10,
-		'display': 'block'
-	})
-	$('#add_cart').click(function () {
-		if ($('#login_btn').text().indexOf('登录') >= 0) {
-			alert('请登录后购买！')
-			location.href("{% url 'df_user:login' %}");
-			return;
-		}
-		$(".add_jump").stop().animate({
-				'left': $to_y + 7,
-				'top': $to_x + 7
-			},
-			"fast",
-			function () {
-				$(".add_jump").fadeOut('fast', function () {
-					$('#show_count').html(2);
+		});
+
+		$('#add_cart').click(function () {
+
+			var $add_x = $('#add_cart').offset().top;
+			var $add_y = $('#add_cart').offset().left;
+
+			var $to_x = $('#show_count').offset().top;
+			var $to_y = $('#show_count').offset().left;
+
+			$(".add_jump").css({
+				'left': $add_y + 80,
+				'top': $add_x + 10,
+				'display': 'block'
+			});
+
+				if ($('.login_btn').text().indexOf('登录') >= 0) {
+					alert('请登陆后购买');
+					location.href("{% url 'df_user:login' %}");
+					return;
+				}
+
+				$(".add_jump").stop().animate({
+						'left': $to_y + 7,
+						'top': $to_x + 7
+					},
+					"fast",
+					function () {
+						$(".add_jump").fadeOut('fast', function () {
+							count = $('.num_show').val();
+							<!-- $('#show_count').html(count); -->
+						});
+					});
+
+				num = parseInt($('.num_show').val());
+				$.get('/cart/add{{ goods.id }}_' + num + '/', function (data) {
+					$('#show_count').text(data.count);
 				});
 
-			});
-	})
+		});
+	});
 </script>
 {% endblock center_content %}
