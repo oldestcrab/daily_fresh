@@ -95,7 +95,7 @@
 			}
 		})
 
-		carts = ''
+		carts = '';
 		$('.goods_list_td').each(function(){
 			cart_id = $(this).arrt(id)
 			carts = carts + cart_id + ','
@@ -104,11 +104,18 @@
 		data = {
 			'carts': carts,
 			'total': {{ total_pay }},
-			'csrfmiddlewaretoken' {% csrf_token %}
+			'csrfmiddlewaretoken': {% csrf_token %},
 		}
 		$.post('/order/push/', data, function(data){
 			if(data.ok==1){
-
+				localStorage.setItem('order_finish', 2);
+				$('.popup_con'). fadeIn('fast', function(){
+					setTimeout(function(){
+						$('.popup_con').fadeOut('fast', function(){
+							window.location.href = "{% url 'df_user:order' 1 %}"
+						});
+					}, 1000)
+				})
 			}else{
 				alert('订单提交失败')
 			}
