@@ -15,11 +15,16 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from django.views.static import serve
+
+from .settings import MEDIA_ROOT
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^user/', include(('df_user.urls', 'df_user'), namespace='df_user')),
     url(r'^', include(('df_goods.urls', 'df_goods'), namespace='df_goods')),
     url(r'^cart/', include(('df_cart.urls', 'df_cart'), namespace='df_cart')),
+    url(r'^order/', include(('df_order.urls', 'df_order'), namespace='df_order')),
     url(r'^tinymce/', include('tinymce.urls')),
+    url(r'^media/(?P<path>.*)$', serve, {"document_root":MEDIA_ROOT})
 ]

@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'df_user',
     'df_goods',
     'df_cart',
+    'df_order',
     'tinymce',
 ]
 

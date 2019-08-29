@@ -8,7 +8,7 @@
 			<ul>
 				{% for g in news %}
 				<li>
-					<a href="/{{ g.id }}"><img src="{{ MEDIA_URL }}{{ g.gpic }}"></a>
+					<a href="/{{ g.id }}"><img src="/media/{{ g.gpic }}"></a>
 					<h4><a href="/{{ g.id }}">{{ g.gtitle }}</a></h4>
 					<div class="prize">{{ g.gprice }}</div>
 				</li>
@@ -28,7 +28,7 @@
 
 			{% for g in page %}
 			<li>
-				<a href="/{{ g.id }}/"><img src="{{ MEDIA_URL }} {{ g.gpic }}"></a>
+				<a href="/{{ g.id }}/"><img src="/media/{{ g.gpic }}"></a>
 				<h4><a href="/{{ g.id }}/">{{ g.gtitle }}</a></h4>
 				<div class="operate">
 					<span class="prize">￥{{ g.gprice }}</span>

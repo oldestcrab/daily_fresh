@@ -41,7 +41,7 @@
 {% block center_content %}
 
 <div class="goods_detail_con clearfix">
-	<div class="goods_detail_pic fl"><img src="{{ MEDIA_URL }}{{ goods.gpic }}"></div>
+	<div class="goods_detail_pic fl"><img src="/media/{{ goods.gpic }}"></div>
 
 	<div class="goods_detail_list fr">
 		<h3>{{ goods.gtitle }}</h3>
@@ -84,7 +84,7 @@
 			<ul>
 				{% for g in news %}
 				<li>
-					<a href="/{{ g.id }}"><img src="{{ MEDIA_URL }}{{ g.gpic }}"></a>
+					<a href="/{{ g.id }}"><img src="/media/{{ g.gpic }}"></a>
 					<h4><a href="/{{ g.id }}">{{ g.gtitle }}</a></h4>
 					<div class="prize">{{ g.gprice }}</div>
 				</li>
