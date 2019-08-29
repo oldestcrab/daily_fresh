@@ -4,7 +4,7 @@ from django.db import models
 class OrderInfo(models.Model):
     oid = models.CharField(max_length=20, primary_key=True, verbose_name='大订单号')
     user = models.ForeignKey("df_user.UserInfo", verbose_name='订单用户', on_delete=models.CASCADE)
-    odate = models.DateField(auto_now=True, verbose_name='订单创建时间')
+    odate = models.DateTimeField(auto_now=True, verbose_name='订单创建时间')
     ototal = models.DecimalField(max_digits=8, decimal_places=2, verbose_name='订单总价')
     oaddress = models.CharField(max_length=150, verbose_name='订单地址')
     ois_pay = models.BooleanField(default=False, verbose_name='是否支付')

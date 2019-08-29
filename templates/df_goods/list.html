@@ -40,10 +40,11 @@
 		</ul>
 
 		<div class="pagenation">
-			{% if page.hsa_previous %}
-			<a href="/list{{ typeinfo.id }}_{{ page.previous_page_number }}_{{ sort_id }}">
-				<上一页</a> {% endif %} {% for pindex in paginator.page_range %} {% if pindex == page.number %} <a
-					href="/list{{ typeinfo.id }}_{{ pindex }}_{{ sort_id }}" class="active">{{ pindex }}
+			{% if page.has_previous %}
+			<a href="/list{{ typeinfo.id }}_{{ page.previous_page_number }}_{{ sort_id }}">上一页</a>
+			{% endif %}
+			{% for pindex in paginator.page_range %} {% if pindex == page.number %}
+			<a href="/list{{ typeinfo.id }}_{{ pindex }}_{{ sort_id }}" class="active">{{ pindex }}
 			</a>
 			{% else %}
 			<a href="/list{{ typeinfo.id }}_{{ pindex }}_{{ sort_id }}">{{ pindex }}</a>

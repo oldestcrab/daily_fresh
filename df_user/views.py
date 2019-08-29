@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect, HttpResponse, HttpResponseRedirect
 from django.http import JsonResponse
 from django.urls import reverse
-from .models import UserInfo, GoodsBrowser
-
+from django.core.paginator import Paginator
 import hashlib
 
 from . import user_decorator
+from df_order.models import OrderInfo, OrderDetailInfo
+from .models import UserInfo, GoodsBrowser
+
 
 # Create your views here.
 def register(request):
@@ -143,9 +145,15 @@ def info(request):
 
 @user_decorator.login
 def order(request, order_page):
-
+    user_id = request.session.get('user_id')
+    order_list = OrderInfo.objects.filter(user_id=int(user_id)).order_by('-odate')
+    paginator = Paginator(order_list, 2)
+    page = paginator.page(int(order_page))
     context = {
-
+        'title': '用户中心',
+        'page_name': 1,
+        'paginator': paginator,
+        'page': page,
     }
     return render(request, 'df_user/user_center_order.html', context=context)
 
