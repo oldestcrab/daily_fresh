@@ -81,6 +81,13 @@
 <div class="order_submit clearfix">
 	<a href="javascript:;" id="order_btn">提交订单</a>
 </div>
+<div class="popup_con">
+	<div class="popup">
+		<p>订单提交成功！</p>
+	</div>
+
+	<div class="mask"></div>
+</div>
 <script>
 	$('#order_btn').click(function () {
 		$('.user_info_check').each(function () {
@@ -96,27 +103,28 @@
 		})
 
 		carts = '';
-		$('.goods_list_td').each(function(){
-			cart_id = $(this).arrt(id)
+		$('.goods_list_td').each(function () {
+			cart_id = $(this).attr('id')
 			carts = carts + cart_id + ','
-			carts = carts.substring(0, carts.length-1)
+
 		})
+		carts = carts.substring(0, carts.length - 1)
 		data = {
 			'carts': carts,
-			'total': {{ total_pay }},
-			'csrfmiddlewaretoken': {% csrf_token %},
+			'total': '{{ total_trans_price }}',
+			'csrfmiddlewaretoken': '{{ csrf_token }}',
 		}
-		$.post('/order/push/', data, function(data){
-			if(data.ok==1){
+		$.post('/order/push/', data, function (data) {
+			if (data.ok == 1) {
 				localStorage.setItem('order_finish', 2);
-				$('.popup_con'). fadeIn('fast', function(){
-					setTimeout(function(){
-						$('.popup_con').fadeOut('fast', function(){
+				$('.popup_con').fadeIn('fast', function () {
+					setTimeout(function () {
+						$('.popup_con').fadeOut('fast', function () {
 							window.location.href = "{% url 'df_user:order' 1 %}"
 						});
 					}, 1000)
 				})
-			}else{
+			} else {
 				alert('订单提交失败')
 			}
 		})

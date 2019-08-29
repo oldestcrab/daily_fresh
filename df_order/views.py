@@ -15,7 +15,7 @@ def order(request):
     user_id = request.session.get('user_id')
     user = UserInfo.objects.get(id=int(user_id))
     cart_ids = request.GET.getlist('cart_id')
-    print(cart_ids)
+    # print(cart_ids)
     carts = []
     total_price = 0
     for goods_id in cart_ids:
@@ -38,9 +38,11 @@ def order(request):
     return render(request, 'df_order/place_order.html', context=context)
 
 @user_decorator.login
+@transaction.atomic()
 def push(request):
     post = request.POST
     cart_ids = post.get('carts')
+    # print(cart_ids)
     total = post.get('total')
     user_id = request.session.get('user_id')
     tran_id = transaction.savepoint()
@@ -49,10 +51,10 @@ def push(request):
         user = UserInfo.objects.get(id=int(user_id))
         order = OrderInfo()
         now = datetime.now()
-        order.user = int(user_id)
+        order.user = user
         order.odate = now
         order.ototal = Decimal(total)
-        order.oid = ''
+        order.oid = '%s%d' % (now.strftime('%Y%m%d%H%M%S'), user_id)
         order.oaddress = user.uaddress
         order.save()
 
