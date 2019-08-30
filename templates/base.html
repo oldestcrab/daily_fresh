@@ -39,6 +39,19 @@
     <div class="sub_page_name fl">|&nbsp;&nbsp;&nbsp;&nbsp;{{ title }}</div>
     {% endif %}
     <div class="search_con fl">
+        <script>
+            $(function () {
+                $('.input_btn').click(function () {
+                    q = $('.input_text').val();
+                    if (q == "") {
+                        alert("请输入搜索内容");
+                    } else {
+                        {# location.href = '{% url "df_goods:ordinary_search" %}?q=' + q + '&page=1' #}
+                        location.href = '{% url "df_goods:search" %}?q='  + q + '&page=1'
+                    }
+                })
+            })
+        </script>
         <input type="text" class="input_text fl" name="" placeholder="搜索商品">
         <input type="button" class="input_btn fr" name="" value="搜索">
     </div>

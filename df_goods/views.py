@@ -117,3 +117,54 @@ def cart_count(request):
         user_id = int(request.session.get('user_id'))
         return CartInfo.objects.filter(user_id=user_id).count()
     return cart_count
+
+def ordinary_search(request):
+
+    from django.db.models import Q
+
+    search_keywords = request.GET.get('q', '')
+    pindex = request.GET.get('pindex', 1)
+    search_status = 1
+    cart_num, guest_cart = 0, 0
+
+    try:
+        user_id = request.session['user_id']
+    except:
+        user_id = None
+
+    if user_id:
+        guest_cart = 1
+        cart_num = CartInfo.objects.filter(user_id=int(user_id)).count()
+
+    goods_list = GoodsInfo.objects.filter(
+        Q(gtitle__icontains=search_keywords) |
+        Q(gcontent__icontains=search_keywords) |
+        Q(gjianjie__icontains=search_keywords)).order_by("gclick")
+
+    if goods_list.count() == 0:
+        # 商品搜索结果为空，返回推荐商品
+        search_status = 0
+        goods_list = GoodsInfo.objects.all().order_by("gclick")[:4]
+
+    paginator = Paginator(goods_list, 4)
+    page = paginator.page(int(pindex))
+
+    context = {
+        'title': '搜索列表',
+        'search_status': search_status,
+        'guest_cart': guest_cart,
+        'cart_num': cart_num,
+        'page': page,
+        'paginator': paginator,
+    }
+    return render(request, 'df_goods/ordinary_search.html', context)
+
+from haystack.views import SearchView
+class MySearchView(SearchView):
+    def extra_context(self):
+        context = super(MySearchView, self).extra_context()
+        context['title'] = '搜索'
+        context['guest_cart'] = 1
+        context['cart_num'] = cart_count(self.request)
+        # print(context['cart_count'])
+        return context

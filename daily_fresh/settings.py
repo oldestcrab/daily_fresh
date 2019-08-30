@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'df_cart',
     'df_order',
     'tinymce',
+    'haystack',
 ]
 
 MIDDLEWARE = [
@@ -142,3 +143,16 @@ TINYMCE_DEFAULT_CONFIG = {
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
+# 搜索引擎
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        # 使用whoosh引擎
+        'ENGINE': 'haystack.backends.whoosh_cn_backend.WhooshEngine',
+        # 引擎文件路径
+        'PATH': os.path.join(BASE_DIR, 'whoosh_index'),
+    }
+}
+# 自动生成索引
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+# 结果分页
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 5

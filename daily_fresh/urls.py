@@ -26,5 +26,6 @@ urlpatterns = [
     url(r'^cart/', include(('df_cart.urls', 'df_cart'), namespace='df_cart')),
     url(r'^order/', include(('df_order.urls', 'df_order'), namespace='df_order')),
     url(r'^tinymce/', include('tinymce.urls')),
-    url(r'^media/(?P<path>.*)$', serve, {"document_root":MEDIA_ROOT})
+    url(r'^media/(?P<path>.*)$', serve, {"document_root":MEDIA_ROOT}),
+    # url(r'^search/', include('haystack.urls')),
 ]
